@@ -1,37 +1,16 @@
 #include "tool.h"
 
-#include <opencv2/opencv.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/imgcodecs.hpp>
-
-#include <QVector2D>
-#include <QLineF>
-#include <QMap>
-#include <QDebug>
+#include "strategy.h"
 
 using namespace cv;
 using namespace std;
 
 Tool::Tool(QObject *parent) : QObject(parent)
 {
-
+    mStrategy = new Strategy();
 }
 
-static void toVariantList(const vector<Vec4f>& lines, QVariantList& out) {
-    out.clear();
-    for (const Vec4f& line: lines) {
-        out.append(QVariant(QVariantList{line[0], line[1], line[2], line[3]}));
-    }
-}
-
-static void toVariantList(const QVector<QLineF>& lines, QVariantList& out) {
-    out.clear();
-    for (const QLineF& line: lines) {
-        out.append(QVariant(QVariantList{line.p1().x(), line.p1().y(), line.p2().x(), line.p2().y()}));
-    }
-}
-
-Mat Tool::preprocess(const Mat &src)
+std::vector<Vec4f> Tool::preprocess(const Mat &src)
 {
     Mat gray;
     cvtColor(src, gray, COLOR_BGR2GRAY);
@@ -45,31 +24,32 @@ Mat Tool::preprocess(const Mat &src)
     Mat edges;
     Canny(median, edges, 50, 100);
 
-    return edges;
+    vector<Vec4f> lines;
+    HoughLinesP(edges, lines, 1, CV_PI/180, 20, 5, 5);
+
+    return lines;
 }
 
-bool Tool::parse(const QString &path)
+bool Tool::process(const QString &path)
 {
     Mat src = imread(path.toStdString());
     if (!src.data) {
         return false;
     }
 
-    Mat edges = preprocess(src);
+    vector<Vec4f> lines = preprocess(src);
 
-    vector<Vec4f> lines;
-    HoughLinesP(edges, lines, 1, CV_PI/180, 20, 5, 5);
+    mStrategy->parse(lines);
 
-    // #
-    toVariantList(lines, mStep1);
-
-    //
+    return true;
+}
 
 
 
 
 
-//    /*
+
+    /*
     QVector<QLineF> hlines;
     QVector<QLineF> vlines;
 
@@ -303,7 +283,27 @@ bool Tool::parse(const QString &path)
     toVariantList(alines, mStep3);
 //    */
 
-    return true;
+//    return true;
+//}
+
+QVariantList Tool::getResult()
+{
+//    mStrategy->mDstLines;
+
+    return QVariantList();
 }
 
 
+//static void toVariantList(const vector<Vec4f>& lines, QVariantList& out) {
+//    out.clear();
+//    for (const Vec4f& line: lines) {
+//        out.append(QVariant(QVariantList{line[0], line[1], line[2], line[3]}));
+//    }
+//}
+
+//static void toVariantList(const QVector<QLineF>& lines, QVariantList& out) {
+//    out.clear();
+//    for (const QLineF& line: lines) {
+//        out.append(QVariant(QVariantList{line.p1().x(), line.p1().y(), line.p2().x(), line.p2().y()}));
+//    }
+//}

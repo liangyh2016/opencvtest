@@ -119,10 +119,10 @@ Window {
         onClicked: {
             path = paths[(index++)%paths.length];
 
-            if (tool.parse(path)) {
-                c1.lines = tool.step1;
-                c2.lines = tool.step2;
-                c3.lines = tool.step3;
+            if (tool.process(path)) {
+//                c1.lines = tool.step1;
+//                c2.lines = tool.step2;
+//                c3.lines = tool.step3;
                 can.requestPaint();
             }
         }
