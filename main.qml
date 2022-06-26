@@ -8,14 +8,14 @@ Window {
     visible: true
     title: qsTr("Hello World")
 
-    property real index: 0;
+    property real index: 4;
     property string path: "";
     property var paths: [
-        "D:/Code/opencvtest/1.jpg",
-        "D:/Code/opencvtest/2.jpg",
-        "D:/Code/opencvtest/3.jpg",
-        "D:/Code/opencvtest/4.jpg",
-        "D:/Code/opencvtest/5.jpg"
+        "/Users/lyh/codes/opencvtest/1.jpg",
+        "/Users/lyh/codes/opencvtest/2.jpg",
+        "/Users/lyh/codes/opencvtest/3.jpg",
+        "/Users/lyh/codes/opencvtest/4.jpg",
+        "/Users/lyh/codes/opencvtest/5.jpg"
     ];
 
     Image {
@@ -120,9 +120,10 @@ Window {
             path = paths[(index++)%paths.length];
 
             if (tool.process(path)) {
-//                c1.lines = tool.step1;
-//                c2.lines = tool.step2;
-//                c3.lines = tool.step3;
+                let obj = tool.getResult();
+                c1.lines = obj.src;
+                c2.lines = obj.mid;
+                c3.lines = obj.dst;
                 can.requestPaint();
             }
         }

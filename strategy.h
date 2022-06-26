@@ -20,12 +20,13 @@ public:
     void parse(const std::vector<cv::Vec4f>& src);
 
 private:
-    void clear();
+    void classifyByHV(const std::vector<cv::Vec4f>& lines, QVector<QLineF>& allHLines, QVector<QLineF>& allVLines);
 
-    void classifyByHV(QVector<QLineF>& allHLines, QVector<QLineF>& allVLines);
+    void parseHLines(const QVector<QLineF>& lines, bool regularLine = true);
+    void parseVLines(const QVector<QLineF>& lines, bool regularLine = true);
 
-    void parseHLines(const QVector<QLineF>& lines);
-    void parseVLines(const QVector<QLineF>& lines);
+    void closeHLineByVLine(const QVector<QLineF>& hlines, const QVector<QLineF>& vlines);
+    void closeVLineByHLine(const QVector<QLineF>& hlines, const QVector<QLineF>& vlines);
 
 private:
     std::vector<cv::Vec4f> mSrcLines;
@@ -33,11 +34,12 @@ private:
     std::vector<cv::Vec4f> mDstLines;
 
 private:
-    int mThickGapThreshold = 20;
+    int mLengthThreshold = 20;
+    int mThickGapThreshold = 30;
     int mLengthGapThreshold = 100;
 
 private:
-    friend QVariantList Tool::getResult();
+    friend QVariantMap Tool::getResult();
 };
 
 #endif // STRATEGY_H

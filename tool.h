@@ -18,7 +18,7 @@ public:
 public slots:
     bool process(const QString& path);
 
-    QVariantList getResult();
+    QVariantMap getResult();
 
 private:
     std::vector<cv::Vec4f> preprocess(const cv::Mat& src);
