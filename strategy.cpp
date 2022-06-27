@@ -182,10 +182,6 @@ void Strategy::parseHLines(const QVector<QLineF> &hlines, bool regularLine)
     qDebug() << lineGroupsByXY.length() << lineGroupsByXY;
 
     for (const LineGroup& lineGroup: lineGroupsByXY) {
-        if (lineGroup.isMin(mLengthGapThreshold)) {
-            continue;
-        }
-
         float firstX = 100000.0;
         float lastX = -100000.0;
 
@@ -209,6 +205,10 @@ void Strategy::parseHLines(const QVector<QLineF> &hlines, bool regularLine)
             if (lastX < maxX) {
                 lastX = maxX;
             }
+        }
+
+        if (lastX - firstX < mLengthThreshold) {
+            continue;
         }
 
         Vec4f lineInfo;
@@ -290,10 +290,6 @@ void Strategy::parseVLines(const QVector<QLineF> &vlines, bool regularLine)
     qDebug() << lineGroupsByXY.length() << lineGroupsByXY;
 
     for (const LineGroup& lineGroup: lineGroupsByXY) {
-        if (lineGroup.isMin(mLengthGapThreshold)) {
-            continue;
-        }
-
         float firstY = 100000.0;
         float lastY = -100000.0;
 
@@ -317,6 +313,10 @@ void Strategy::parseVLines(const QVector<QLineF> &vlines, bool regularLine)
             if (lastY < maxY) {
                 lastY = maxY;
             }
+        }
+
+        if (lastY - firstY < mLengthThreshold) {
+            continue;
         }
 
         Vec4f lineInfo;

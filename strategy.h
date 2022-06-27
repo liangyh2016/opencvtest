@@ -35,7 +35,7 @@ private:
 
 private:
     int mLengthThreshold = 20;
-    int mThickGapThreshold = 30;
+    int mThickGapThreshold = 15;
     int mLengthGapThreshold = 100;
 
 private:

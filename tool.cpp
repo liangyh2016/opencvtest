@@ -55,7 +55,7 @@ static QVariantList toVariantList(const vector<Vec4f>& lines = {}) {
 QVariantMap Tool::getResult()
 {
     QVariantMap result;
-    result.insert("src", toVariantList(/*mStrategy->mSrcLines*/));
+    result.insert("src", toVariantList(mStrategy->mSrcLines));
     result.insert("mid", toVariantList(mStrategy->mMidLines));
     result.insert("dst", toVariantList(mStrategy->mDstLines));
     return result;
