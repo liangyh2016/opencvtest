@@ -73,7 +73,6 @@ void Strategy::parse(const std::vector<cv::Vec4f> &src)
 
     // 二次处理
     {
-
         QVector<QLineF> allHLines;
         QVector<QLineF> allVLines;
 

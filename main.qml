@@ -11,11 +11,11 @@ Window {
     property real index: 4;
     property string path: "";
     property var paths: [
-        "/Users/lyh/codes/opencvtest/1.jpg",
-        "/Users/lyh/codes/opencvtest/2.jpg",
-        "/Users/lyh/codes/opencvtest/3.jpg",
-        "/Users/lyh/codes/opencvtest/4.jpg",
-        "/Users/lyh/codes/opencvtest/5.jpg"
+        "D:/Code/opencvtest/1.jpg",
+        "D:/Code/opencvtest/2.jpg",
+        "D:/Code/opencvtest/3.jpg",
+        "D:/Code/opencvtest/4.jpg",
+        "D:/Code/opencvtest/5.jpg"
     ];
 
     Image {
