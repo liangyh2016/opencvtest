@@ -8,7 +8,7 @@ Window {
     visible: true
     title: qsTr("Hello World")
 
-    property real index: 5;
+    property real index: 9;
     property string path: "";
     property var paths: [
         "D:/Code/opencvtest/1.jpg",
@@ -19,7 +19,9 @@ Window {
         "D:/Code/opencvtest/6.jpg",
         "D:/Code/opencvtest/7.jpg",
         "D:/Code/opencvtest/8.jpg",
-        "D:/Code/opencvtest/9.jpg"
+        "D:/Code/opencvtest/9.jpg",
+        "D:/Code/opencvtest/10.jpg",
+        "D:/Code/opencvtest/11.jpg"
     ];
 
     Image {
