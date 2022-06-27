@@ -44,10 +44,6 @@ struct LineGroup {
         }
         return false;
     }
-
-    bool isMin(int lengthThreshold) const {
-        return qAbs(mLast-mFirst) < lengthThreshold;
-    }
 };
 
 inline QDebug operator<< (QDebug& os, const LineGroup& lp) {

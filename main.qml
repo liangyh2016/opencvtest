@@ -18,7 +18,8 @@ Window {
         "D:/Code/opencvtest/5.jpg",
         "D:/Code/opencvtest/6.jpg",
         "D:/Code/opencvtest/7.jpg",
-        "D:/Code/opencvtest/8.jpg"
+        "D:/Code/opencvtest/8.jpg",
+        "D:/Code/opencvtest/9.jpg"
     ];
 
     Image {

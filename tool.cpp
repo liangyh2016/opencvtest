@@ -7,6 +7,7 @@ using namespace std;
 
 Tool::Tool(QObject *parent) : QObject(parent)
 {
+    mStrategy = new Strategy1();
 }
 
 std::vector<Vec4f> Tool::preprocess(const Mat &src)
@@ -31,8 +32,6 @@ std::vector<Vec4f> Tool::preprocess(const Mat &src)
 
 bool Tool::process(const QString &path)
 {
-    mStrategy = new Strategy1();
-
     Mat src = imread(path.toStdString());
     if (!src.data) {
         return false;
