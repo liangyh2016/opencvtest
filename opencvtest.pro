@@ -8,11 +8,13 @@ CONFIG += c++11
 
 HEADERS += \
     strategy.h \
+    strategy1.h \
     tool.h
 
 SOURCES += \
         main.cpp \
         strategy.cpp \
+        strategy1.cpp \
         tool.cpp
 
 RESOURCES += qml.qrc
