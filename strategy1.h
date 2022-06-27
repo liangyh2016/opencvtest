@@ -24,6 +24,9 @@ private:
     void closeHLineByVLine(const QVector<QLineF>& hlines, const QVector<QLineF>& vlines);
     void closeVLineByHLine(const QVector<QLineF>& hlines, const QVector<QLineF>& vlines);
 
+    void clipHLineByVLine(const QVector<QLineF>& hlines, const QVector<QLineF>& vlines);
+    void clipVLineByHLine(const QVector<QLineF>& hlines, const QVector<QLineF>& vlines);
+
 private:
     int mLengthThreshold = 20;
     int mThickGapThreshold = 15;

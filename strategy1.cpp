@@ -67,35 +67,36 @@ void Strategy1::parse(const std::vector<cv::Vec4f> &src)
 
         mDstLines.clear();
 
-        parseHLines(allHLines, false);
-        parseVLines(allVLines, false);
+        parseHLines(allHLines);
+        parseVLines(allVLines);
     }
 
-    // 二次处理
     {
+        auto tempLines = std::move(mDstLines);
+
         QVector<QLineF> allHLines;
         QVector<QLineF> allVLines;
 
-        classifyByHV(mDstLines, allHLines, allVLines);
-
-        mDstLines.clear();
-
-        parseHLines(allHLines, true);
-        parseVLines(allVLines, true);
-    }
-
-    mMidLines = std::move(mDstLines);
-
-    {
-        QVector<QLineF> allHLines;
-        QVector<QLineF> allVLines;
-
-        classifyByHV(mMidLines, allHLines, allVLines);
+        classifyByHV(tempLines, allHLines, allVLines);
 
         mDstLines.clear();
 
         closeHLineByVLine(allHLines, allVLines);
         closeVLineByHLine(allHLines, allVLines);
+    }
+
+    {
+        auto tempLines = std::move(mDstLines);
+
+        QVector<QLineF> allHLines;
+        QVector<QLineF> allVLines;
+
+        classifyByHV(tempLines, allHLines, allVLines);
+
+        mDstLines.clear();
+
+        clipHLineByVLine(allHLines, allVLines);
+        clipVLineByHLine(allHLines, allVLines);
     }
 }
 
@@ -350,7 +351,7 @@ void Strategy1::closeHLineByVLine(const QVector<QLineF> &hlines, const QVector<Q
             auto type = hline.intersect(vline, &ip);
             if (type != QLineF::NoIntersection) {
                 float vDistance = qMin(QVector2D(vline.p1()-ip).length(), QVector2D(vline.p2()-ip).length());
-                float vDistanceRefer = vDistance/5;
+                float vDistanceRefer = vDistance/10;
 
                 {
                     QVector2D fv(hline.p1()-ip);
@@ -400,7 +401,7 @@ void Strategy1::closeVLineByHLine(const QVector<QLineF> &hlines, const QVector<Q
             auto type = vline.intersect(hline, &ip);
             if (type != QLineF::NoIntersection) {
                 float hDistance = qMin(QVector2D(hline.p1()-ip).length(), QVector2D(hline.p2()-ip).length());
-                float hDistanceRefer = hDistance/5;
+                float hDistanceRefer = hDistance/10;
 
                 {
                     QVector2D fv(vline.p1()-ip);
@@ -432,5 +433,79 @@ void Strategy1::closeVLineByHLine(const QVector<QLineF> &hlines, const QVector<Q
         float ly = lastExtendPoint.y();
 
         mDstLines.push_back(Vec4f(fx, fy, lx, ly));
+    }
+}
+
+void Strategy1::clipHLineByVLine(const QVector<QLineF> &hlines, const QVector<QLineF> &vlines)
+{
+    float minX = 100000.0;
+    float maxX = -100000.0;
+    for (const QLineF& vline: vlines) {
+        float x1 = vline.p1().x();
+        float x2 = vline.p2().x();
+
+        if (qAbs(x1 - x2) > 0.001) {
+            continue;
+        }
+
+        float x = x1;
+
+        minX = qMin(x, minX);
+        maxX = qMax(x, maxX);
+    }
+
+    for (const QLineF& hline: hlines) {
+        float x1 = hline.p1().x();
+        float y1 = hline.p1().y();
+        float x2 = hline.p2().x();
+        float y2 = hline.p2().y();
+
+        if (x1 < x2) {
+            x1 = qMax(x1, minX);
+            x2 = qMin(x2, maxX);
+        }
+        else {
+            x1 = qMin(x1, maxX);
+            x2 = qMax(x2, minX);
+        }
+
+        mDstLines.push_back(Vec4f(x1, y1, x2, y2));
+    }
+}
+
+void Strategy1::clipVLineByHLine(const QVector<QLineF> &hlines, const QVector<QLineF> &vlines)
+{
+    float minY = 100000.0;
+    float maxY = -100000.0;
+    for (const QLineF& hline: hlines) {
+        float y1 = hline.p1().y();
+        float y2 = hline.p2().y();
+
+        if (qAbs(y1 - y2) > 0.001) {
+            continue;
+        }
+
+        float y = y1;
+
+        minY = qMin(y, minY);
+        maxY = qMax(y, maxY);
+    }
+
+    for (const QLineF& vline: vlines) {
+        float x1 = vline.p1().x();
+        float y1 = vline.p1().y();
+        float x2 = vline.p2().x();
+        float y2 = vline.p2().y();
+
+        if (y1 < y2) {
+            y1 = qMax(y1, minY);
+            y2 = qMin(y2, maxY);
+        }
+        else {
+            y1 = qMin(y1, maxY);
+            y2 = qMax(y2, minY);
+        }
+
+        mDstLines.push_back(Vec4f(x1, y1, x2, y2));
     }
 }
