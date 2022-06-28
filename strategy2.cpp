@@ -29,14 +29,27 @@ struct LineGroup {
             QPointF b1 = xline.p1();
             QPointF b2 = xline.p2();
 
+            bool isNearest = false;
+
             if (position(a1, a2, b1) * position(a1, a2, b2) <= 0 && position(b1, b2, a1) * position(b1, b2, a2) <= 0) { // 相交
-                mLines.push_back(line);
-                return true;
+                isNearest = true;
+            }
+            else if (nearestSegment(a1, a2, b1) || nearestSegment(a1, a2, b2) || nearestSegment(b1, b2, a1) || nearestSegment(b1, b2, a2)) { // 距离很近
+                isNearest = true;
             }
 
-            if (nearestVector(a1, a2, b1) || nearestVector(a1, a2, b2) || nearestVector(b1, b2, a1) || nearestVector(b1, b2, a2)) { // 距离很近
-                mLines.push_back(line);
-                return true;
+            if (isNearest) {
+                QVector2D v1(a1 - a2);
+                QVector2D v2(b1 - b2);
+
+                v1.normalize();
+                v2.normalize();
+
+                float angle = qAcos(QVector2D::dotProduct(v1, v2)) / M_PI *180;
+                if (qAbs(angle - 0) < 20 || qAbs(180 - angle) < 20) {
+                    mLines.push_back(line);
+                    return true;
+                }
             }
         }
 
@@ -81,7 +94,7 @@ private:
         return 10;
     }
 
-    bool nearestVector(const QPointF& a, const QPointF& b, const QPointF& p) {
+    bool nearestSegment(const QPointF& a, const QPointF& b, const QPointF& p) {
         qreal r = ((p.x() - a.x()) * (b.x() - a.x()) + (p.y() - a.y()) * (b.y() - a.y())) / distance(a, b);
         if (r <= 0) {
             qreal dist = qSqrt(distance(a, p));
@@ -128,8 +141,8 @@ void Strategy2::parse(const std::vector<cv::Vec4f> &src)
         mMidLines.clear();
         mDstLines.clear();
 
-        parseHLines(allHLines, false);
-        parseVLines(allVLines, false);
+        parseHLines(allHLines);
+        parseVLines(allVLines);
     }
 
     {
@@ -145,35 +158,6 @@ void Strategy2::parse(const std::vector<cv::Vec4f> &src)
         closeHLineByVLine(allHLines, allVLines);
         closeVLineByHLine(allHLines, allVLines);
     }
-
-    // 二次处理
-//    {
-//        vector<Vec4f> tempLines = std::move(mDstLines);
-
-//        QVector<QLineF> allHLines;
-//        QVector<QLineF> allVLines;
-
-//        classifyByHV(tempLines, allHLines, allVLines);
-
-//        mDstLines.clear();
-
-//        parseHLines(allHLines, true);
-//        parseVLines(allVLines, true);
-//    }
-
-//    {
-//        vector<Vec4f> tempLines = std::move(mDstLines);
-
-//        QVector<QLineF> allHLines;
-//        QVector<QLineF> allVLines;
-
-//        classifyByHV(tempLines, allHLines, allVLines);
-
-//        mDstLines.clear();
-
-//        closeHLineByVLine(allHLines, allVLines);
-//        closeVLineByHLine(allHLines, allVLines);
-//    }
 }
 
 void Strategy2::classifyByHV(const vector<Vec4f>& lines, QVector<QLineF> &allHLines, QVector<QLineF> &allVLines)
@@ -204,7 +188,7 @@ static std::vector<cv::Vec4f> toVec4f(const QVector<QLineF> &lines) {
     return vec4fs;
 }
 
-void Strategy2::parseHLines(const QVector<QLineF> &hlines, bool regularLine)
+void Strategy2::parseHLines(const QVector<QLineF> &hlines)
 {
     QVector<QLineF> lines = std::move(hlines);
     qSort(lines.begin(), lines.end(), [](const QLineF& l1, const QLineF& l2)->bool {
@@ -275,16 +259,11 @@ void Strategy2::parseHLines(const QVector<QLineF> &hlines, bool regularLine)
         float fy = -(lineVector.y()*(linePoint.x()-fx))/lineVector.x() + linePoint.y();
         float ly =  (lineVector.y()*(lx-linePoint.x()))/lineVector.x() + linePoint.y();
 
-        if (regularLine) {
-            fy = linePoint.y();
-            ly = linePoint.y();
-        }
-
         mDstLines.push_back(Vec4f(fx, fy, lx, ly));
     }
 }
 
-void Strategy2::parseVLines(const QVector<QLineF> &vlines, bool regularLine)
+void Strategy2::parseVLines(const QVector<QLineF> &vlines)
 {
     QVector<QLineF> lines = std::move(vlines);
     qSort(lines.begin(), lines.end(), [](const QLineF& l1, const QLineF& l2)->bool {
@@ -354,11 +333,6 @@ void Strategy2::parseVLines(const QVector<QLineF> &vlines, bool regularLine)
         float ly = lastY;
         float fx = -(lineVector.x()*(linePoint.y()-fy))/lineVector.y() + linePoint.x();
         float lx =  (lineVector.x()*(ly-linePoint.y()))/lineVector.y() + linePoint.x();
-
-        if (regularLine) {
-            fx = linePoint.x();
-            lx = linePoint.x();
-        }
 
         mDstLines.push_back(Vec4f(fx, fy, lx, ly));
     }

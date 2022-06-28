@@ -18,8 +18,8 @@ public:
 private:
     void classifyByHV(const std::vector<cv::Vec4f>& lines, QVector<QLineF>& allHLines, QVector<QLineF>& allVLines);
 
-    void parseHLines(const QVector<QLineF>& lines, bool regularLine = true);
-    void parseVLines(const QVector<QLineF>& lines, bool regularLine = true);
+    void parseHLines(const QVector<QLineF>& lines);
+    void parseVLines(const QVector<QLineF>& lines);
 
     void closeHLineByVLine(const QVector<QLineF>& hlines, const QVector<QLineF>& vlines);
     void closeVLineByHLine(const QVector<QLineF>& hlines, const QVector<QLineF>& vlines);
