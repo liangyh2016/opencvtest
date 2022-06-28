@@ -1,13 +1,14 @@
 #include "tool.h"
 
 #include "strategy1.h"
+#include "strategy2.h"
 
 using namespace cv;
 using namespace std;
 
 Tool::Tool(QObject *parent) : QObject(parent)
 {
-    mStrategy = new Strategy1();
+    mStrategy = new Strategy2();
 }
 
 std::vector<Vec4f> Tool::preprocess(const Mat &src)
@@ -50,6 +51,14 @@ static QVariantList toVariantList(const vector<Vec4f>& lines = {}) {
         out.append(QVariant(QVariantList{line[0], line[1], line[2], line[3]}));
     }
     return out;
+}
+
+static QVariantList toVariantList(const vector<vector<Vec4f>>& liness = {}) {
+    QVariantList outs;
+    for (const vector<Vec4f>& lines: liness) {
+        outs.append(QVariant(toVariantList(lines)));
+    }
+    return outs;
 }
 
 QVariantMap Tool::getResult()

@@ -8,7 +8,7 @@ Window {
     visible: true
     title: qsTr("Hello World")
 
-    property real index: 9;
+    property real index: 8;
     property string path: "";
     property var paths: [
         "D:/Code/opencvtest/1.jpg",
@@ -50,13 +50,13 @@ Window {
         CCanvas {
             id: c1
             anchors.fill: parent
-            color: "#FF0000"
+            color: "#DDDDDD"
             ox: can.ox
             oy: can.oy
             sc: can.sc
         }
 
-        CCanvas {
+        CCanvasEx {
             id: c2
             anchors.fill: parent
             color: "#00FF00"
@@ -128,7 +128,7 @@ Window {
             if (tool.process(path)) {
                 let obj = tool.getResult();
                 c1.lines = obj.src;
-                c2.lines = obj.mid;
+                c2.liness = obj.mid;
                 c3.lines = obj.dst;
                 can.requestPaint();
             }

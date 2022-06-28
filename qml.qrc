@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>CCanvas.qml</file>
+        <file>CCanvasEx.qml</file>
     </qresource>
 </RCC>

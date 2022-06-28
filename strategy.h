@@ -20,7 +20,7 @@ public:
 
 protected:
     std::vector<cv::Vec4f> mSrcLines;
-    std::vector<cv::Vec4f> mMidLines;
+    std::vector<std::vector<cv::Vec4f>> mMidLines;
     std::vector<cv::Vec4f> mDstLines;
 
 private:
