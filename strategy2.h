@@ -24,6 +24,8 @@ private:
     void closeHLineByVLine(const QVector<QLineF>& hlines, const QVector<QLineF>& vlines);
     void closeVLineByHLine(const QVector<QLineF>& hlines, const QVector<QLineF>& vlines);
 
+    void regularLines(QVector<QLineF>& hlines, QVector<QLineF>& vlines);
+
 private:
     int mLengthThreshold = 20;
     int mThickGapThreshold = 15;
